@@ -1,0 +1,64 @@
+# Node / Monorepo
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+.out/
+.next/
+coverage/
+
+# Env files
+.env
+.env.*
+!env.example
+api/.env
+client/.env
+web3/.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor
+.vscode/
+.DS_Store
+.idea/
+*.swp
+
+# Prisma
+prisma/dev.db*
+prisma/*.db-journal
+
+# Hardhat / Solidity artifacts
+web3/artifacts/
+web3/cache/
+web3/typechain-types/
+
+# Generated types
+**/generated/
+
+# Local data
+.tmp/
+.temp/
+
+# Lock / state (keep the main lockfiles, ignore partials)
+package-lock.json
+# If you want to keep root lockfile remove the above line
+
+# Optional: ignore yarn.lock if migrating to npm
+# yarn.lock
+
+# Coverage temp
+.nyc_output/
+
+# OS
+Thumbs.db
+
+# Misc
+*.tgz
