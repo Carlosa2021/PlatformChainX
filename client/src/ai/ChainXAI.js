@@ -1,5 +1,5 @@
-import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-import OpenAI from 'openai';
+import { createThirdwebClient } from "thirdweb";
+// Note: OpenAI import will be handled server-side for security
 
 /**
  * ChainX Protocol - AI Tokenization Engine
@@ -7,12 +7,8 @@ import OpenAI from 'openai';
  */
 export class ChainXAI {
   constructor() {
-    this.sdk = new ThirdwebSDK("polygon", {
-      secretKey: process.env.THIRDWEB_SECRET_KEY,
-    });
-    
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+    this.client = createThirdwebClient({
+      clientId: import.meta.env.VITE_THIRDWEB_CLIENT_ID,
     });
   }
 
@@ -29,14 +25,14 @@ export class ChainXAI {
       // Step 1: Market Analysis (30 seconds)
       const marketAnalysis = await this.getMarketAnalysis(asset);
       
-      // Step 2: Generate Tokenomics (60 seconds)
+      // Step 2: Generate Tokenomics (60 seconds)  
       const tokenomics = await this.generateTokenomics(asset, marketAnalysis);
       
       // Step 3: Compliance Check (30 seconds)
       const compliance = await this.checkCompliance(asset);
       
-      // Step 4: Smart Contract Generation (120 seconds)
-      const smartContract = await this.generateSmartContract(asset, tokenomics);
+      // Step 4: Smart Contract Generation (120 seconds) - Server-side
+      const smartContract = await this.generateSmartContractRequest(asset, tokenomics);
       
       // Step 5: Deployment Strategy (30 seconds)
       const deployment = await this.getOptimalDeployment(asset);
@@ -106,54 +102,51 @@ export class ChainXAI {
   }
 
   /**
-   * ⚡ SPEED FEATURE: Contract Generation in 2 Minutes
+   * ⚡ SPEED FEATURE: Contract Generation Request (Client-side)
+   * Sends request to backend for contract generation
    */
-  async generateSmartContract(asset, tokenomics) {
-    const prompt = `
-    Generate an enterprise-grade smart contract for tokenizing this asset:
-    
-    Asset: ${JSON.stringify(asset, null, 2)}
-    Tokenomics: ${JSON.stringify(tokenomics, null, 2)}
-    
-    Requirements:
-    - ERC-20 compatible with dividend distribution
-    - Compliance with MiCA regulations  
-    - Gas-optimized for ${tokenomics.recommendedChain}
-    - Include pause/unpause functionality
-    - KYC/AML integration hooks
-    - Multi-signature governance
-    
-    Make it production-ready and auditable.
-    `;
-
-    const response = await this.openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [
-        {
-          role: "system",
-          content: "You are a senior blockchain developer specializing in tokenization contracts. Generate production-ready Solidity code."
+  async generateSmartContractRequest(asset, tokenomics) {
+    // This will call the backend API for OpenAI integration
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ai/generate-contract`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        {
-          role: "user", 
-          content: prompt
-        }
-      ],
-      temperature: 0.3,
-      max_tokens: 4000
-    });
+        body: JSON.stringify({
+          asset,
+          tokenomics,
+          requirements: {
+            compliance: ['MiCA', 'KYC', 'AML'],
+            features: ['dividend-distribution', 'pause-unpause', 'multi-sig'],
+            chain: tokenomics.recommendedChain
+          }
+        }),
+      });
 
-    const contractCode = response.choices[0].message.content;
-    
-    // AI-powered audit
-    const auditResults = await this.auditContract(contractCode);
-    
-    return {
-      contractCode,
-      auditResults,
-      gasEstimate: await this.estimateGas(contractCode),
-      deploymentCost: await this.calculateDeploymentCost(tokenomics.recommendedChain),
-      readyToDeploy: auditResults.score > 85
-    };
+      if (!response.ok) {
+        throw new Error('Failed to generate smart contract');
+      }
+
+      const result = await response.json();
+      
+      return {
+        contractCode: result.contractCode,
+        auditResults: result.auditResults,
+        gasEstimate: result.gasEstimate,
+        deploymentCost: result.deploymentCost,
+        readyToDeploy: result.auditResults.score > 85
+      };
+    } catch (error) {
+      console.error('Smart Contract Generation Error:', error);
+      return {
+        contractCode: "// Contract generation failed - using fallback template",
+        auditResults: { score: 70, issues: ["Template used"] },
+        gasEstimate: "~500,000 gas",
+        deploymentCost: "$50-100",
+        readyToDeploy: false
+      };
+    }
   }
 
   /**

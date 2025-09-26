@@ -123,8 +123,11 @@ const LandingPage = () => {
                 <span className="text-gray-500">•</span>
                 <span className="text-blue-400 font-semibold">2,500+ Chains</span>
                 <span className="text-gray-500">•</span>
-                <span className="text-green-400 font-semibold">Enterprise Grade</span>
+                <span className="text-green-400 font-semibold">Swiss Hosted</span>
+                <span className="text-gray-500">•</span>
+                <span className="text-orange-400 font-semibold">Enterprise Grade</span>
               </div>
+              <p className="text-xs text-gray-500 mt-2">🇨🇭 Hosted in Switzerland • Enterprise Security • GDPR Compliant</p>
             </div>
           </motion.div>
         </div>

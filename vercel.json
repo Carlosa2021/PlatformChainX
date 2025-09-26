@@ -13,7 +13,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://api.chainx.pro/api/$1"
+      "dest": "https://api.plataforma.chainx.ch/api/$1"
     },
     {
       "src": "/(.*)",
@@ -23,8 +23,9 @@
   "env": {
     "VITE_THIRDWEB_CLIENT_ID": "@thirdweb_client_id",
     "VITE_THIRDWEB_SECRET_KEY": "@thirdweb_secret_key",
-    "VITE_API_URL": "https://api.chainx.pro",
-    "VITE_APP_NAME": "ChainX Protocol"
+    "VITE_API_URL": "https://api.plataforma.chainx.ch",
+    "VITE_APP_NAME": "ChainX Protocol",
+    "VITE_DOMAIN": "plataforma.chainx.ch"
   },
   "build": {
     "env": {
@@ -36,5 +37,24 @@
     "client/src/**": {
       "includeFiles": "client/dist/**"
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
 }
