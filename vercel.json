@@ -1,25 +1,18 @@
+
 {
   "version": 2,
-  "name": "chainx-protocol",
   "buildCommand": "cd client && npm run build",
   "outputDirectory": "client/dist",
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "https://api.plataforma.chainx.ch/api/$1"
+      "source": "/api/(.*)",
+      "destination": "https://api.plataforma.chainx.ch/api/$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
-  "env": {
-    "VITE_THIRDWEB_CLIENT_ID": "@thirdweb_client_id",
-    "VITE_THIRDWEB_SECRET_KEY": "@thirdweb_secret_key",
-    "VITE_API_URL": "https://api.plataforma.chainx.ch",
-    "VITE_APP_NAME": "ChainX Protocol",
-    "VITE_DOMAIN": "plataforma.chainx.ch"
-  },
   "headers": [
     {
       "source": "/(.*)",
