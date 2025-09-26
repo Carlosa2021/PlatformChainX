@@ -1,15 +1,8 @@
 {
   "version": 2,
   "name": "chainx-protocol",
-  "builds": [
-    {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
+  "buildCommand": "cd client && npm run build",
+  "outputDirectory": "client/dist",
   "routes": [
     {
       "src": "/api/(.*)",
@@ -17,7 +10,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "client/$1"
+      "dest": "/index.html"
     }
   ],
   "env": {
@@ -26,17 +19,6 @@
     "VITE_API_URL": "https://api.plataforma.chainx.ch",
     "VITE_APP_NAME": "ChainX Protocol",
     "VITE_DOMAIN": "plataforma.chainx.ch"
-  },
-  "build": {
-    "env": {
-      "VITE_THIRDWEB_CLIENT_ID": "@thirdweb_client_id",
-      "VITE_THIRDWEB_SECRET_KEY": "@thirdweb_secret_key"
-    }
-  },
-  "functions": {
-    "client/src/**": {
-      "includeFiles": "client/dist/**"
-    }
   },
   "headers": [
     {
