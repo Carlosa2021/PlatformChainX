@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "hardhat-javascript-starter": "file:.."
+  }
+}

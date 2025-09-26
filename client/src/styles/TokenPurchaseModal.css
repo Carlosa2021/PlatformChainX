@@ -1,0 +1,130 @@
+/* Añadir en tu archivo CSS */
+
+.modal {
+  width: 500px;
+  max-width: 90%;
+  margin: auto;
+  background: #1c1c24;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  color: white;
+  font-size: 1.5em;
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.campaign-image {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+.info-container {
+  text-align: center;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.progress-bar-container {
+  background: #3a3a43;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.progress-bar {
+  height: 5px;
+  background: #ff751a;
+}
+
+.purchase-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #3a3a43;
+  border-radius: 5px;
+  background: transparent;
+  color: white;
+}
+
+.percentage-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.percentage-buttons button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #3a3a43;
+  color: white;
+  cursor: pointer;
+}
+
+.checkbox-container {
+  text-align: left;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.checkbox-container label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.checkbox-container a {
+  color: #ff751a;
+  text-decoration: underline;
+}
+
+.modal-footer {
+  text-align: center;
+}
+
+.purchase-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background: #ff751a;
+  color: white;
+  cursor: pointer;
+}

@@ -23,22 +23,27 @@ import PlataformaChainXABI from '../context/PlataformaChainXABI.json';
 const TokenChainXABI = TokenChainXABIData.abi;
 const StateContext = createContext();
 
-const client = createThirdwebClient({
-  clientId: import.meta.env.VITE_THIRDWEB_CLIENT_ID,
-});
+const clientIdEnv = import.meta.env.VITE_THIRDWEB_CLIENT_ID;
+const client = clientIdEnv
+  ? createThirdwebClient({ clientId: clientIdEnv })
+  : null;
 
-const contract = getContract({
-  client,
-  address: '0x78D69Fb6f757bCCE89381018125Cea307513ABf5',
-  abi: PlataformaChainXABI,
-  chain: polygon,
-});
-const TokenChainXContract = getContract({
-  client,
-  address: '0x879CaF6c12D2fD533ee4A9a75B68159d270dfBD5',
-  abi: TokenChainXABI,
-  chain: polygon,
-});
+const contract =
+  client &&
+  getContract({
+    client,
+    address: '0x78D69Fb6f757bCCE89381018125Cea307513ABf5',
+    abi: PlataformaChainXABI,
+    chain: polygon,
+  });
+const TokenChainXContract =
+  client &&
+  getContract({
+    client,
+    address: '0x879CaF6c12D2fD533ee4A9a75B68159d270dfBD5',
+    abi: TokenChainXABI,
+    chain: polygon,
+  });
 
 const usdcContractAddress = '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359';
 const priceFeedAddress = '0x73366Fe0AA0Ded304479862808e02506FE556a98';
@@ -176,6 +181,37 @@ export const StateContextProvider = ({ children }) => {
     }
   };
 
+  // --- Dividendos ---
+  const { mutateAsync: sendDividendTx } = useSendTransaction();
+
+  const claimDividend = async (campaignId) => {
+    if (!contract) return;
+    try {
+      const transaction = prepareContractCall({
+        contract,
+        method: 'claimDividend',
+        params: [campaignId],
+      });
+      return await sendDividendTx(transaction);
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const checkDividendClaimed = async (campaignId, userAddress) => {
+    if (!contract || !userAddress) return false;
+    try {
+      const claimed = await readContract({
+        contract,
+        method: 'function dividendClaimed(uint256,address) view returns (bool)',
+        params: [campaignId, userAddress],
+      });
+      return claimed;
+    } catch {
+      return false;
+    }
+  };
+
   const getDonatorsCampaigns = async (pId) => {
     try {
       console.log('🔍 Llamando a getDonatorsCampaigns con ID:', pId);
@@ -267,6 +303,8 @@ export const StateContextProvider = ({ children }) => {
         provider,
         signer,
         usdcContract,
+        claimDividend,
+        checkDividendClaimed,
       }}
     >
       {children}

@@ -1,0 +1,303 @@
+// Prisma schema inicial para plataforma ChainX
+// Nota: Ajustar índices y constraints según necesidades de rendimiento.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN_GLOBAL
+  ADMIN_TENANT
+  ISSUER
+  INVESTOR
+}
+
+enum KycStatus {
+  PENDING
+  DOCS_REQUIRED
+  REVIEW
+  APPROVED
+  REJECTED
+  REVOKED
+}
+
+enum CampaignStatus {
+  DRAFT
+  FUNDING
+  FUNDED
+  CLOSED
+  DIVIDENDS_DECLARED
+  ARCHIVED
+}
+
+enum DocumentType {
+  PROSPECTUS
+  STATUTES
+  AUDIT
+  OTHER
+}
+
+enum WithdrawalStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  PROCESSING
+  COMPLETED
+}
+
+enum NotificationType {
+  KYC_APPROVED
+  KYC_REJECTED
+  NEW_CAMPAIGN
+  DIVIDEND_DECLARED
+  DIVIDEND_RECEIVED
+  CAMPAIGN_CLOSED
+  WITHDRAWAL_COMPLETED
+}
+
+model Tenant {
+  id             String       @id @default(cuid())
+  name           String
+  code           String       @unique // usado para subdominio o header
+  domain         String?      @unique
+  primaryColor   String?
+  secondaryColor String?
+  logoUrl        String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  users          UserTenant[]
+  campaigns      Campaign[]
+}
+
+model User {
+  id                String             @id @default(cuid())
+  walletAddress     String             @unique
+  email             String?            @unique
+  displayName       String?
+  country           String? // ISO code
+  kycStatus         KycStatus          @default(PENDING)
+  kycUpdatedAt      DateTime?
+  kycProviderSessionId String?         // ID de sesión en proveedor externo (Sumsub/Persona/Veriff)
+  lastLoginAt       DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  roles             UserTenant[]
+  wallets           Wallet[]
+  kycFiles          KycFile[]
+  kycHistory        KycStatusHistory[]
+  investments       Investment[]
+  withdrawals       Withdrawal[]
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+  pushSubscriptions PushSubscription[]
+  dividendClaims    DividendClaim[]
+}
+
+model UserTenant {
+  id        String   @id @default(cuid())
+  userId    String
+  tenantId  String
+  role      UserRole
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@unique([userId, tenantId, role])
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String
+  address   String
+  chainId   Int
+  primary   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([address, chainId])
+}
+
+model KycFile {
+  id         String   @id @default(cuid())
+  userId     String
+  type       String // e.g., ID_FRONT, ID_BACK, PROOF_ADDRESS
+  storageKey String // ruta S3/IPFS privada
+  hashSha256 String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model KycStatusHistory {
+  id         String     @id @default(cuid())
+  userId     String
+  fromStatus KycStatus?
+  toStatus   KycStatus
+  reason     String?
+  createdAt  DateTime   @default(now())
+  user       User       @relation(fields: [userId], references: [id])
+}
+
+model Campaign {
+  id             String         @id @default(cuid())
+  tenantId       String
+  title          String
+  slug           String         @unique
+  descriptionMd  String // Markdown enriquecido
+  locationLat    Float?
+  locationLng    Float?
+  locationLabel  String?
+  status         CampaignStatus @default(DRAFT)
+  softCap        Decimal?       @db.Decimal(38, 18)
+  hardCap        Decimal        @db.Decimal(38, 18)
+  tokenPriceUsd  Decimal        @db.Decimal(38, 18) // precio referencia
+  roiEstimatePct Float?
+  riskLevel      String? // LOW/MEDIUM/HIGH (string para flexibilidad)
+  startsAt       DateTime?
+  endsAt         DateTime?
+  totalRaised    Decimal        @default(0) @db.Decimal(38, 18)
+  totalInvestors Int            @default(0)
+  metadataCid    String? // IPFS metadata
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  tenant         Tenant         @relation(fields: [tenantId], references: [id])
+  tokenStats     CampaignToken?
+  investments    Investment[]
+  dividends      Dividend[]
+  documents      Document[]
+  withdrawals    Withdrawal[]
+}
+
+model CampaignToken {
+  id           String   @id @default(cuid())
+  campaignId   String   @unique
+  tokenAddress String
+  chainId      Int
+  totalSupply  Decimal  @db.Decimal(38, 18)
+  soldSupply   Decimal  @default(0) @db.Decimal(38, 18)
+  holdersCount Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  campaign     Campaign @relation(fields: [campaignId], references: [id])
+
+  @@unique([tokenAddress, chainId])
+}
+
+model Investment {
+  id            String   @id @default(cuid())
+  campaignId    String
+  userId        String
+  walletAddress String
+  txHash        String
+  amountUsd     Decimal  @db.Decimal(38, 18)
+  tokenAmount   Decimal  @db.Decimal(38, 18)
+  createdAt     DateTime @default(now())
+  campaign      Campaign @relation(fields: [campaignId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([campaignId, userId])
+  @@index([walletAddress])
+  @@unique([txHash])
+}
+
+model Dividend {
+  id          String          @id @default(cuid())
+  campaignId  String
+  periodLabel String // e.g., Q1-2025
+  totalAmount Decimal         @db.Decimal(38, 18)
+  declaredAt  DateTime        @default(now())
+  txHash      String? // transacción on-chain declare
+  createdAt   DateTime        @default(now())
+  campaign    Campaign        @relation(fields: [campaignId], references: [id])
+  claims      DividendClaim[]
+
+  @@index([campaignId])
+}
+
+model DividendClaim {
+  id         String    @id @default(cuid())
+  dividendId String
+  userId     String
+  amount     Decimal   @db.Decimal(38, 18)
+  claimed    Boolean   @default(false)
+  claimedAt  DateTime?
+  txHash     String?
+  createdAt  DateTime  @default(now())
+  dividend   Dividend  @relation(fields: [dividendId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
+
+  @@unique([dividendId, userId])
+}
+
+model Document {
+  id          String       @id @default(cuid())
+  campaignId  String
+  type        DocumentType
+  title       String
+  cid         String? // IPFS hash público
+  storageKey  String? // Almacenamiento privado
+  sha256      String
+  onChainHash String? // Hash registrado en contrato
+  createdAt   DateTime     @default(now())
+  campaign    Campaign     @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
+}
+
+model Withdrawal {
+  id          String           @id @default(cuid())
+  userId      String
+  campaignId  String?
+  amountUsd   Decimal          @db.Decimal(38, 18)
+  destination String
+  status      WithdrawalStatus @default(REQUESTED)
+  requestedAt DateTime         @default(now())
+  processedAt DateTime?
+  txHash      String?
+  user        User             @relation(fields: [userId], references: [id])
+  campaign    Campaign?        @relation(fields: [campaignId], references: [id])
+
+  @@index([userId])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id])
+
+  @@index([userId, read])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String?
+  entityId  String?
+  ip        String?
+  userAgent String?
+  meta      Json?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}

@@ -10,7 +10,9 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
     "lint": "eslint . --ext .ts",
-    "env:doctor": "tsx src/scripts/envDoctor.ts"
+    "env:doctor": "tsx src/scripts/envDoctor.ts",
+    "seed": "tsx src/scripts/seed.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@fastify/cookie": "^9.3.1",
@@ -19,7 +21,7 @@
     "@fastify/static": "^7.0.4",
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^1.10.2",
-    "@prisma/client": "^5.18.0",
+    "@prisma/client": "5.22.0",
     "argon2": "^0.40.1",
     "dotenv": "^16.4.7",
     "fastify": "^4.28.1",
@@ -39,7 +41,8 @@
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
-    "prisma": "^5.18.0",
+    "prisma": "5.22.0",
+    "vitest": "^1.6.0",
     "tsx": "^4.19.1",
     "typescript": "^5.5.4"
   }

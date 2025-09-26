@@ -14,6 +14,25 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       target: 'esnext',
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return;
+            if (id.includes('thirdweb')) return 'thirdweb';
+            if (id.includes('ethers')) return 'ethers';
+            if (
+              id.includes('react-router') ||
+              id.includes('react-dom') ||
+              id.includes('/react/')
+            )
+              return 'react';
+            if (id.includes('@headlessui') || id.includes('lucide-react'))
+              return 'ui';
+            return 'vendor';
+          },
+        },
+      },
+      chunkSizeWarningLimit: 1200,
     },
     resolve: {
       alias: {},

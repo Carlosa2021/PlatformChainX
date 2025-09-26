@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "workspaces": [
+    "client",
+    "web3"
+  ],
+  "scripts": {
+    "dev:client": "npm --prefix ./client run dev",
+    "build:client": "npm --prefix ./client run build",
+    "preview:client": "npm --prefix ./client run preview",
+    "test:web3": "npm --prefix ./web3 test",
+    "build:web3": "npm --prefix ./web3 run build"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.3",
+    "lucide-react": "^0.510.0"
+  }
+}

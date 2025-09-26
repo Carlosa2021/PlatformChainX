@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🔹 Gradientes */
+.linear-gradient-dark {
+  background: linear-gradient(
+    179.14deg,
+    rgba(32, 18, 63, 0) -7.14%,
+    #000000 87.01%
+  );
+}
+.linear-gradient-light {
+  background: linear-gradient(
+    179.14deg,
+    rgba(240, 240, 240, 0) -7.14%,
+    #f0f0f0 87.01%
+  );
+}
+
+/* 🔹 Scrollbar Custom */
+.custom-scrollbar-dark::-webkit-scrollbar,
+.custom-scrollbar-light::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar-track {
+  background: #1c1c24;
+}
+.custom-scrollbar-dark::-webkit-scrollbar-thumb {
+  background: #b2b3bd;
+}
+.custom-scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  background: #1c1c24;
+}
+
+.custom-scrollbar-light::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+.custom-scrollbar-light::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+}
+.custom-scrollbar-light::-webkit-scrollbar-thumb:hover {
+  background: #c0c0c0;
+}
+
+/* 🔹 Texto adaptado por tema */
+.thirdweb-text-dark {
+  color: #f0f0f0 !important;
+}
+.thirdweb-text-light {
+  color: #000000 !important;
+}
+
+/* 🔹 Menú horizontal responsivo */
+.horizontal-menu {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  border-bottom: 2px solid #ff751a;
+  padding-bottom: 10px;
+  scrollbar-width: none;
+}
+.horizontal-menu::-webkit-scrollbar {
+  display: none;
+}
+
+/* 🔹 Botones del menú */
+.menu-button {
+  font-size: clamp(12px, 2vw, 16px);
+  font-weight: bold;
+  border: none;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  min-width: 110px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Estilos oscuros */
+.menu-button-dark {
+  background: #2c2f32;
+  color: #b2b3bd;
+}
+.menu-button-dark:hover {
+  background: #3a3a43;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* Estilos claros */
+.menu-button-light {
+  background: #e0e0e0;
+  color: #404040;
+}
+.menu-button-light:hover {
+  background: #d0d0d0;
+  color: #000000;
+  transform: scale(1.05);
+}
+
+/* Activo en ambos temas */
+.active-dark,
+.active-light {
+  background: #ff751a;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* Móvil */
+@media screen and (max-width: 768px) {
+  .horizontal-menu {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 8px;
+    white-space: nowrap;
+  }
+  .menu-button {
+    font-size: 12px;
+    padding: 8px 12px;
+    min-width: 90px;
+  }
+}

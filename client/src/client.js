@@ -5,8 +5,6 @@ if (!clientId) {
   console.warn('⚠️  Falta VITE_THIRDWEB_CLIENT_ID en client/.env');
 }
 
-const client = createThirdwebClient({
-  clientId,
-});
+const client = clientId ? createThirdwebClient({ clientId }) : null;
 
 export default client;
