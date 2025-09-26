@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "name": "chainx-protocol",
+  "builds": [
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://api.chainx.pro/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "client/$1"
+    }
+  ],
+  "env": {
+    "VITE_THIRDWEB_CLIENT_ID": "@thirdweb_client_id",
+    "VITE_THIRDWEB_SECRET_KEY": "@thirdweb_secret_key",
+    "VITE_API_URL": "https://api.chainx.pro",
+    "VITE_APP_NAME": "ChainX Protocol"
+  },
+  "build": {
+    "env": {
+      "VITE_THIRDWEB_CLIENT_ID": "@thirdweb_client_id",
+      "VITE_THIRDWEB_SECRET_KEY": "@thirdweb_secret_key"
+    }
+  },
+  "functions": {
+    "client/src/**": {
+      "includeFiles": "client/dist/**"
+    }
+  }
+}
