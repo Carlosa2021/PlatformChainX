@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChainXAI } from '../ai/ChainXAISimple';
 
-const LandingPage = () => {
+const LandingPage = ({ onEnterPlatform, onLogin }) => {
   const [demoRunning, setDemoRunning] = useState(false);
   const [currentStat, setCurrentStat] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -71,10 +71,11 @@ const LandingPage = () => {
             Pricing
           </motion.button>
           <motion.button
+            onClick={() => onEnterPlatform && onEnterPlatform()}
             whileHover={{ scale: 1.05 }}
             className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            Start Free Trial
+            🏦 Enter Platform
           </motion.button>
         </div>
       </nav>
@@ -168,6 +169,14 @@ const LandingPage = () => {
               className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 min-w-[280px]"
             >
               {demoRunning ? '🚀 Tokenizing Real Estate...' : '🚀 Start 5-Minute Demo - Free'}
+            </motion.button>
+
+            <motion.button
+              onClick={() => onEnterPlatform && onEnterPlatform()}
+              whileHover={{ scale: 1.05 }}
+              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              🏦 Access Full Platform
             </motion.button>
 
             <motion.button
