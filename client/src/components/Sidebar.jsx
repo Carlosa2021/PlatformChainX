@@ -1,19 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useStateContext } from '../context/index.jsx';
+import { useStateContext } from '../context/SimpleContext';
 import { ThemeContext } from '../../src/components/ThemeContext';
-import {
-  useActiveWallet,
-  useDisconnect,
-  useActiveAccount,
-} from 'thirdweb/react';
 import { logo, sun, moon } from '../assets';
 import { navlinks } from '../constants';
 
 const Sidebar = () => {
-  const wallet = useActiveWallet();
-  const { disconnect } = useDisconnect();
-  const account = useActiveAccount();
+  // Demo mode - no wallet hooks for now
+  const wallet = null;
+  const disconnect = () => console.log('Demo: Disconnect');
+  const account = null;
   const navigate = useNavigate();
   const { address } = useStateContext();
   const { theme, toggleTheme } = useContext(ThemeContext);

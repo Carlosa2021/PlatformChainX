@@ -1,13 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ConnectButton } from 'thirdweb/react';
-import { useAuth } from '../context/AuthProvider';
 import { ThemeContext } from '../../src/components/ThemeContext';
-import { darkTheme, lightTheme } from 'thirdweb/react';
-import client from '../client';
-import { API_BASE } from '../api/http';
-
-import { useStateContext } from '../context/index.jsx';
+import { useStateContext } from '../context/SimpleContext';
 import { logo, menu } from '../assets';
 import { navlinks } from '../constants';
 
