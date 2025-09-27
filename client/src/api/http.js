@@ -3,7 +3,7 @@
 export const API_BASE =
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_BASE ||
-  'http://localhost:4000';
+  (import.meta.env.PROD ? 'https://api.plataforma.chainx.ch' : 'http://localhost:4000');
 
 let accessToken = null; // en memoria
 let refreshInFlight = null;
@@ -40,30 +40,58 @@ export async function apiFetch(path, options = {}) {
   headers.set('Content-Type', 'application/json');
   if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`);
 
-  const resp = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers,
-    credentials: 'include',
-  });
+  try {
+    const resp = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers,
+      credentials: 'include',
+    });
 
-  if (resp.status === 401) {
-    // intentar refresh una vez
-    try {
-      await refreshToken();
-      return apiFetch(path, { ...options, _retry: true });
-    } catch {
-      throw new Error('UNAUTHORIZED');
+    // Si estamos en desarrollo y el API no está disponible, usar datos mock
+    if (!resp.ok && !import.meta.env.PROD && resp.status === 0) {
+      console.warn('API no disponible, usando datos mock');
+      return getMockData(path);
     }
-  }
 
-  if (!resp.ok) {
-    const text = await resp.text();
-    throw new Error(text || `Error HTTP ${resp.status}`);
-  }
+    if (resp.status === 401) {
+      // intentar refresh una vez
+      try {
+        await refreshToken();
+        return apiFetch(path, { ...options, _retry: true });
+      } catch {
+        throw new Error('UNAUTHORIZED');
+      }
+    }
 
-  const ct = resp.headers.get('content-type');
-  if (ct && ct.includes('application/json')) return resp.json();
-  return resp.text();
+    if (!resp.ok) {
+      const text = await resp.text();
+      throw new Error(text || `Error HTTP ${resp.status}`);
+    }
+
+    const ct = resp.headers.get('content-type');
+    if (ct && ct.includes('application/json')) return resp.json();
+    return resp.text();
+  } catch (error) {
+    // En desarrollo, si hay error de conexión, usar mock data
+    if (!import.meta.env.PROD && error.message.includes('Failed to fetch')) {
+      console.warn('Error de conexión, usando datos mock');
+      return getMockData(path);
+    }
+    throw error;
+  }
+}
+
+// Datos mock para desarrollo
+function getMockData(path) {
+  const mockResponses = {
+    '/health': { status: 'ok', environment: 'development-mock' },
+    '/auth/user': { user: null },
+    '/campaigns': [],
+    '/investments': [],
+    '/kyc/status': { status: 'pending' }
+  };
+  
+  return Promise.resolve(mockResponses[path] || { message: 'Mock response' });
 }
 
 export const api = {

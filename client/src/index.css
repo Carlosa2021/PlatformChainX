@@ -1,49 +1,155 @@
 @import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 🔹 Gradientes */
+/* 🔹 Premium animations */
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.2);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.8);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.8);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* 🔹 Swiss Premium Theme */
+.swiss-gradient {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e1b4b 100%);
+}
+
+.premium-glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.premium-shadow {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* 🔹 Gradientes Mejorados */
 .linear-gradient-dark {
-  background: linear-gradient(
-    179.14deg,
-    rgba(32, 18, 63, 0) -7.14%,
-    #000000 87.01%
-  );
-}
-.linear-gradient-light {
-  background: linear-gradient(
-    179.14deg,
-    rgba(240, 240, 240, 0) -7.14%,
-    #f0f0f0 87.01%
-  );
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
 }
 
-/* 🔹 Scrollbar Custom */
-.custom-scrollbar-dark::-webkit-scrollbar,
-.custom-scrollbar-light::-webkit-scrollbar {
-  width: 5px;
+.linear-gradient-premium {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #3730a3 50%, #1e1b4b 75%, #0f172a 100%);
 }
 
-.custom-scrollbar-dark::-webkit-scrollbar-track {
-  background: #1c1c24;
-}
-.custom-scrollbar-dark::-webkit-scrollbar-thumb {
-  background: #b2b3bd;
-}
-.custom-scrollbar-dark::-webkit-scrollbar-thumb:hover {
-  background: #1c1c24;
+/* 🔹 Scrollbar Mejorado */
+.custom-scrollbar-premium::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.custom-scrollbar-light::-webkit-scrollbar-track {
-  background: #f0f0f0;
+.custom-scrollbar-premium::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.3);
+  border-radius: 10px;
 }
-.custom-scrollbar-light::-webkit-scrollbar-thumb {
-  background: #d0d0d0;
+
+.custom-scrollbar-premium::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.custom-scrollbar-light::-webkit-scrollbar-thumb:hover {
-  background: #c0c0c0;
+
+.custom-scrollbar-premium::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+}
+
+/* 🔹 Componentes Premium */
+.premium-card {
+  @apply bg-gradient-to-br from-gray-900/90 via-gray-800/90 to-gray-900/90;
+  @apply backdrop-blur-xl border border-gray-700/50;
+  @apply shadow-2xl rounded-2xl;
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.premium-button {
+  @apply relative overflow-hidden font-semibold rounded-xl;
+  @apply transition-all duration-300 ease-out;
+  @apply transform hover:scale-105 active:scale-95;
+}
+
+.premium-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.7s;
+}
+
+.premium-button:hover::before {
+  transform: translateX(100%);
 }
 
 /* 🔹 Texto adaptado por tema */
